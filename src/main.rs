@@ -41,8 +41,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tokio::time::sleep(Duration::from_millis(250)).await;
 
     if !stats.running.load(Ordering::SeqCst) {
-        let err = proxy_task.await.unwrap_or_else(|e| Err(e.to_string()))?;
-        return Err(err.into());
+        match proxy_task.await {
+            Ok(Err(e)) => return Err(e.into()),
+            Ok(Ok(())) => return Err("не удалось запустить прокси".into()),
+            Err(e) => return Err(e.into()),
+        }
     }
 
     print_banner(&cli);
