@@ -11,8 +11,7 @@ RUN apt-get update \
 COPY Cargo.toml ./
 COPY src ./src
 
-RUN cargo build --release --locked \
-    || cargo build --release
+RUN cargo build --release
 
 FROM debian:bookworm-slim
 
